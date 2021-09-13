@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: url("./sky.jpg") no-repeat;
+      background-size: 100% 100%;
+      background-position: 0 0;
+    }
+    h1 {
+      color: #fff;
+    }
+    button {
+      width: 120px;
+      height: 30px;
+    }
+    .login_container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: top;
+      border: 1px solid #eee;
+      width: 500px;
+      padding: 50px;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #5f9ea0ad;
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 300px;
+      height: 30px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <body>
+    <div class="login_container">
+      <h1>test</h1>
+      <div class="form">
+        <input type="text" id="username" placeholder="print your number" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
+        <input type="password" id="password" placeholder="print your password" onKeyUp="value=value.replace(/[\W]/g,'')" maxlength="8" minlength="4"/>
+      </div>
+	  
+      <div>
+        <button type="button" onclick="login()">login</button>
+        <button type="button" onclick="location.href='./register.html'">register</button>
+        <button type="button" onclick="location.href='./changePassword.html'">forget password</button>
+      </div>
+    </div>
+<script type="text/javascript"></script>
+		<script>
+			function ajaxPost(url, data, callBack) {
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", url, true);
+				xhr.setRequestHeader("Content-Type",
+						"application/x-www-form-urlencoded");
+				xhr.onreadystatechange = function() {
+					if (xhr.status == 200 && xhr.readyState == 4) {
+						callBack(xhr.responseText)
+					}
+				};
+				xhr.send(data);
+			}
+			
+			function login() {
+				var user_obj=document.getElementById("username");
+				var pwd_obj=document.getElementById("password")
+				var username = user_obj.value;
+				var password = pwd_obj.value;
+				if (check_id(user_obj)==false){
+					return;
+				}	
+				if (check_password(pwd_obj)==false){
+					return;
+				}
+				//alert(username);
+				window.localStorage.setItem("username", username);
+
+				var action = "login";
+				var url = "http://127.0.0.1:8080/WebCase/student?action=" + action + "&username=" + username + "&password=" + password;
+				ajaxPost(url, "", callBack);
+				
+			}
+			
+			function callBack(data) {
+
+				var json = JSON.parse(data);
+				console.log('1')
+				var code = json.code;
+				console.log('2')
+				if(code == 1) {
+                    alert("sucess");
+					window.location.href = 'edit.html' ;
+				}else {
+                    alert("data:" + data);
+                }
+			}
+			function check_id(obj)
+			 {
+				   var s_id=obj.value;
+				   if (s_id.length!=8){
+				    alert("number format error")
+				    return false ;
+				   }
+				   for(var i=0;i<=s_id.length - 1;i++) {
+				    var c=s_id.substr(i,1)
+				    if (c<'0'||c>'9'){
+				     alert("no letter is allowed")
+				     return false ;
+				    }   
+				   } 
+				    return true;
+				  }
+				 function check_password(obj)
+				  {
+				 		   var s_pwd=obj.value;
+				 		   var is_have_num=false;
+				 		   var is_have_char=false;
+				 		   if (!(s_pwd.length>=4&&s_pwd.length<=8)){
+				 			   alert("Password length is wrong");
+				 			   return false;
+				 		   }
+				 		   for(var i=0;i<=s_pwd.length - 1;i++) {
+				 			   var c=s_pwd.substr(i,1);
+				 			   if (c>='0'&&c<='9'){
+				 				   is_have_num=true;
+				 				}else{
+				 				   is_have_char=true;
+				 			   }
+				 		   }
+				 		   if(is_have_num==true&&is_have_char==true){
+				 			 return true;
+				 		   }
+				 		   else{
+				 			   if (is_have_num==false){
+				 				   alert("Password has no numbers");
+				 			   }
+				 			   if (is_have_char==false){
+				 				   alert("Password has no letters");
+				 			   }
+				 			   return false;
+				 		   }
+				  }
+			
+			
+		</script>
+  </body>
+</html>
